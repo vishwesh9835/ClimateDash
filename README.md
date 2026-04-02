@@ -19,7 +19,7 @@ ClimateDash is a **premium real-time weather analytics dashboard** for major Ind
 
 ## 🌐 Live Demo
 
-> **[👉 View ClimateDash Live](https://your-deployed-link-here.vercel.app)**
+> **[👉 View ClimateDash Live](https://climate-dash-nine.vercel.app/)**
 > *(Replace link once deployed to Vercel / Netlify / GitHub Pages)*
 
 ---
