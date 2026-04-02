@@ -3,172 +3,182 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>ClimateDash — Live Weather</title>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <title>ClimateDash — Live India Weather Analytics</title>
+  <meta name="description" content="Real-time weather analytics dashboard for major Indian cities. Live temperature, humidity, wind, visibility and AQI data powered by WeatherAPI.com." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+
+<!-- Animated background orbs -->
+<div class="bg-orb orb-1"></div>
+<div class="bg-orb orb-2"></div>
+<div class="bg-orb orb-3"></div>
+
 <div class="shell">
 
-  <!-- Header -->
+  <!-- ══ Header ══ -->
   <header class="topbar">
     <div class="brand">
-      <div class="brand-icon">🌦️</div>
+      <div class="brand-icon">
+        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="20" cy="20" r="20" fill="url(#bg)" />
+          <path d="M20 8a8 8 0 0 1 8 8c0 3.5-2 6.5-5 8l1 4H16l1-4a9 9 0 0 1-5-8 8 8 0 0 1 8-8z" fill="white" opacity="0.9"/>
+          <circle cx="26" cy="30" r="4" fill="white" opacity="0.7"/>
+          <circle cx="20" cy="33" r="3" fill="white" opacity="0.6"/>
+          <circle cx="14" cy="30" r="4" fill="white" opacity="0.7"/>
+          <defs>
+            <linearGradient id="bg" x1="0" y1="0" x2="40" y2="40">
+              <stop offset="0%" stop-color="#4f8ef7"/>
+              <stop offset="100%" stop-color="#a78bfa"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
       <div class="brand-text">
         <h1>Climate<span>Dash</span></h1>
         <p>Real-time weather analytics · India</p>
       </div>
     </div>
-    <div class="live-badge"><div class="live-dot"></div> Live System</div>
+
+    <div class="topbar-controls">
+      <div class="search-wrap">
+        <svg class="search-icon" viewBox="0 0 20 20" fill="none"><circle cx="8.5" cy="8.5" r="5.5" stroke="currentColor" stroke-width="1.5"/><path d="M13.5 13.5L17 17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <input type="text" id="city-search" class="search-input" placeholder="Add a city (e.g. Pune)…" autocomplete="off" />
+        <button class="search-btn" id="search-btn">Add</button>
+      </div>
+
+      <button class="unit-toggle" id="unit-toggle" title="Toggle °C / °F">
+        <span class="unit-opt active" id="unit-c">°C</span>
+        <span class="unit-sep">/</span>
+        <span class="unit-opt" id="unit-f">°F</span>
+      </button>
+
+      <button class="theme-toggle" id="theme-toggle" title="Toggle light / dark mode">
+        <span class="theme-icon" id="theme-icon">🌙</span>
+        <span id="theme-label">Dark</span>
+      </button>
+
+      <div class="live-badge">
+        <div class="live-dot"></div>
+        <span>Live</span>
+      </div>
+    </div>
   </header>
 
-  <!-- Stats strip -->
+  <!-- ══ Auto-refresh bar ══ -->
+  <div class="refresh-strip">
+    <div class="refresh-strip-left">
+      <svg viewBox="0 0 16 16" fill="none" width="13" height="13"><path d="M2 8a6 6 0 1 1 1.2 3.6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M2 12V8h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Auto-refreshes in <strong id="countdown">5:00</strong>
+    </div>
+    <div class="refresh-strip-right">
+      <span id="last-updated-text">Fetching data…</span>
+      <button class="refresh-btn-small" id="refresh-btn">
+        <svg viewBox="0 0 16 16" fill="none" width="13" height="13"><path d="M2 8a6 6 0 1 1 1.2 3.6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M2 12V8h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Refresh now
+      </button>
+    </div>
+  </div>
+
+  <!-- ══ Quick stat strip ══ -->
   <p class="section-label">Current Temperatures</p>
-  <div class="stats-row">
-    <div class="stat-card">
-      <div class="stat-icon">🌊</div>
-      <div class="stat-city">Mumbai</div>
-      <div class="stat-temp skeleton" id="stat-Mumbai-temp">--</div>
-      <div class="stat-desc" id="stat-Mumbai-desc">Loading…</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-icon">☀️</div>
-      <div class="stat-city">Delhi</div>
-      <div class="stat-temp skeleton" id="stat-Delhi-temp">--</div>
-      <div class="stat-desc" id="stat-Delhi-desc">Loading…</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-icon">🌴</div>
-      <div class="stat-city">Chennai</div>
-      <div class="stat-temp skeleton" id="stat-Chennai-temp">--</div>
-      <div class="stat-desc" id="stat-Chennai-desc">Loading…</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-icon">🏙️</div>
-      <div class="stat-city">Kolkata</div>
-      <div class="stat-temp skeleton" id="stat-Kolkata-temp">--</div>
-      <div class="stat-desc" id="stat-Kolkata-desc">Loading…</div>
-    </div>
+  <div class="stats-row" id="stats-row">
+    <!-- Populated by JS -->
   </div>
 
-  <!-- City detail cards -->
+  <!-- ══ City detail cards ══ -->
   <div class="section-header">
-    <h2>Live City Weather Details</h2>
-    <button class="refresh-btn" id="refresh-btn">
-      <span class="spin">↻</span> Refresh
-    </button>
+    <div>
+      <h2>Live City Weather</h2>
+      <p class="section-sub">Tap any card for detailed metrics</p>
+    </div>
+    <div class="header-actions">
+      <select class="sort-select" id="sort-select">
+        <option value="default">Sort: Default</option>
+        <option value="temp-asc">Temp ↑</option>
+        <option value="temp-desc">Temp ↓</option>
+        <option value="humidity">Humidity</option>
+        <option value="wind">Wind Speed</option>
+      </select>
+    </div>
   </div>
-  <div class="city-grid">
-
-    <div class="city-card">
-      <div class="city-card-head">
-        <h3>Mumbai</h3>
-        <span class="badge badge-live" id="badge-Mumbai">LIVE</span>
-      </div>
-      <div class="city-main-row">
-        <div class="city-big-temp skeleton" id="card-Mumbai-temp">--</div>
-        <div class="city-weather-icon" id="card-Mumbai-icon">🌡️</div>
-      </div>
-      <div>
-        <div class="city-cond" id="card-Mumbai-cond">Fetching conditions…</div>
-        <div class="city-extra" id="card-Mumbai-extra"></div>
-      </div>
-      <div class="city-footer" id="card-Mumbai-footer"></div>
-    </div>
-
-    <div class="city-card">
-      <div class="city-card-head">
-        <h3>Delhi</h3>
-        <span class="badge badge-live" id="badge-Delhi">LIVE</span>
-      </div>
-      <div class="city-main-row">
-        <div class="city-big-temp skeleton" id="card-Delhi-temp">--</div>
-        <div class="city-weather-icon" id="card-Delhi-icon">🌡️</div>
-      </div>
-      <div>
-        <div class="city-cond" id="card-Delhi-cond">Fetching conditions…</div>
-        <div class="city-extra" id="card-Delhi-extra"></div>
-      </div>
-      <div class="city-footer" id="card-Delhi-footer"></div>
-    </div>
-
-    <div class="city-card">
-      <div class="city-card-head">
-        <h3>Chennai</h3>
-        <span class="badge badge-live" id="badge-Chennai">LIVE</span>
-      </div>
-      <div class="city-main-row">
-        <div class="city-big-temp skeleton" id="card-Chennai-temp">--</div>
-        <div class="city-weather-icon" id="card-Chennai-icon">🌡️</div>
-      </div>
-      <div>
-        <div class="city-cond" id="card-Chennai-cond">Fetching conditions…</div>
-        <div class="city-extra" id="card-Chennai-extra"></div>
-      </div>
-      <div class="city-footer" id="card-Chennai-footer"></div>
-    </div>
-
-    <div class="city-card">
-      <div class="city-card-head">
-        <h3>Kolkata</h3>
-        <span class="badge badge-live" id="badge-Kolkata">LIVE</span>
-      </div>
-      <div class="city-main-row">
-        <div class="city-big-temp skeleton" id="card-Kolkata-temp">--</div>
-        <div class="city-weather-icon" id="card-Kolkata-icon">🌡️</div>
-      </div>
-      <div>
-        <div class="city-cond" id="card-Kolkata-cond">Fetching conditions…</div>
-        <div class="city-extra" id="card-Kolkata-extra"></div>
-      </div>
-      <div class="city-footer" id="card-Kolkata-footer"></div>
-    </div>
-
+  <div class="city-grid" id="city-grid">
+    <!-- Populated by JS -->
   </div>
 
-  <!-- Charts -->
-  <p class="charts-title">Analytics Overview</p>
+  <!-- ══ Analytics section ══ -->
+  <div class="section-header" style="margin-top:8px">
+    <div>
+      <h2>Analytics Overview</h2>
+      <p class="section-sub">Comparative metrics across all cities</p>
+    </div>
+    <div class="chart-tabs" id="chart-tabs">
+      <button class="chart-tab active" data-chart="bar">Bar</button>
+      <button class="chart-tab" data-chart="line">Line</button>
+    </div>
+  </div>
   <div class="charts-grid">
     <div class="chart-panel">
-      <div class="chart-panel-title">🌡️ Temperature Comparison (°C)</div>
-      <canvas id="chart-temp" height="220"></canvas>
+      <div class="chart-panel-header">
+        <div class="chart-panel-title">
+          <span class="chart-dot dot-temp"></span>
+          Temperature (°C)
+        </div>
+        <span class="chart-badge" id="chart-temp-max"></span>
+      </div>
+      <div class="canvas-wrap"><canvas id="chart-temp"></canvas></div>
     </div>
     <div class="chart-panel">
-      <div class="chart-panel-title">💧 Humidity Levels</div>
-      <div class="humidity-list">
-        <div class="hum-row">
-          <div class="hum-label-row"><span>Mumbai</span><span id="hum-Mumbai-val">--%</span></div>
-          <div class="hum-bar-bg"><div class="hum-bar-fill" id="hum-Mumbai-bar"></div></div>
+      <div class="chart-panel-header">
+        <div class="chart-panel-title">
+          <span class="chart-dot dot-humidity"></span>
+          Humidity Levels
         </div>
-        <div class="hum-row">
-          <div class="hum-label-row"><span>Delhi</span><span id="hum-Delhi-val">--%</span></div>
-          <div class="hum-bar-bg"><div class="hum-bar-fill" id="hum-Delhi-bar"></div></div>
-        </div>
-        <div class="hum-row">
-          <div class="hum-label-row"><span>Chennai</span><span id="hum-Chennai-val">--%</span></div>
-          <div class="hum-bar-bg"><div class="hum-bar-fill" id="hum-Chennai-bar"></div></div>
-        </div>
-        <div class="hum-row">
-          <div class="hum-label-row"><span>Kolkata</span><span id="hum-Kolkata-val">--%</span></div>
-          <div class="hum-bar-bg"><div class="hum-bar-fill" id="hum-Kolkata-bar"></div></div>
-        </div>
+      </div>
+      <div class="humidity-list" id="humidity-list">
+        <!-- Populated by JS -->
       </div>
     </div>
     <div class="chart-panel">
-      <div class="chart-panel-title">🌬️ Wind Speed (km/h)</div>
-      <canvas id="chart-wind" height="220"></canvas>
+      <div class="chart-panel-header">
+        <div class="chart-panel-title">
+          <span class="chart-dot dot-wind"></span>
+          Wind Speed (km/h)
+        </div>
+        <span class="chart-badge" id="chart-wind-max"></span>
+      </div>
+      <div class="canvas-wrap"><canvas id="chart-wind"></canvas></div>
     </div>
     <div class="chart-panel">
-      <div class="chart-panel-title">👁️ Visibility (km)</div>
-      <canvas id="chart-vis" height="220"></canvas>
+      <div class="chart-panel-header">
+        <div class="chart-panel-title">
+          <span class="chart-dot dot-vis"></span>
+          Visibility (km)
+        </div>
+        <span class="chart-badge" id="chart-vis-max"></span>
+      </div>
+      <div class="canvas-wrap"><canvas id="chart-vis"></canvas></div>
     </div>
   </div>
 
+  <!-- ══ Footer ══ -->
   <footer>
-    Powered by <a href="https://www.weatherapi.com/" target="_blank">WeatherAPI.com</a> ·
-    Built with ClimateDash
+    <div class="footer-inner">
+      <span>Powered by <a href="https://www.weatherapi.com/" target="_blank" rel="noopener">WeatherAPI.com</a></span>
+      <span class="footer-divider">·</span>
+      <span>Built with ClimateDash</span>
+      <span class="footer-divider">·</span>
+      <span id="footer-time"></span>
+    </div>
   </footer>
+
 </div>
+
+<!-- Toast container -->
+<div id="toast-container"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="weather_stats.js"></script>
